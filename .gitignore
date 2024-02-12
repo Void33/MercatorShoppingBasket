@@ -1,0 +1,8 @@
+.bsp
+.idea
+project/target
+project/project/target
+target
+### Scala ###
+*.class
+*.log
