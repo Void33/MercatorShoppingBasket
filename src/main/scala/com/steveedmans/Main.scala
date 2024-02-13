@@ -15,7 +15,7 @@ object Main {
       service.processBasket(contents) match {
         case Right(basket) =>
           val costInPounds: Double = basket.cost / 100.0
-          println(s"There are ${basket.size} items in the basket which totals to £${costInPounds}")
+          println(s"There are ${basket.size} items in the basket which totals to £$costInPounds")
         case Left(error) =>
           println(s"An error occurred processing the basket - $error")
       }
