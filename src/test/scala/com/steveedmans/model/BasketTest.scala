@@ -2,6 +2,7 @@ package com.steveedmans.model
 
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.*
+import scala.collection.mutable
 
 class BasketTest extends AnyWordSpec with should.Matchers {
   private val shop = Shop()
@@ -99,5 +100,36 @@ class BasketTest extends AnyWordSpec with should.Matchers {
       orangesInBasket.get._1 shouldBe orange
       orangesInBasket.get._2 shouldBe 1
     }
+
+    "can process an offer" in {
+      val basket = Basket()
+      val offer = TestOffer()
+
+      basket.add(orange)
+      basket.add(apple)
+
+      basket.processOffer(offer)
+
+      offer.processed shouldBe true
+
+      basket.size shouldBe 5
+    }
+  }
+
+  /**
+   * A dummy offer to confirm that
+   * the basket can handle them
+   */
+  class TestOffer extends Offer {
+    var processed: Boolean = false
+    override def process(contents: mutable.Map[String, (Purchasable, Int)]):
+      mutable.Map[String, (Purchasable, Int)] = {
+      processed = true
+      mutable.Map(name -> (this, 1))
+    }
+
+    override val name: String = "test"
+    override val cost: Int = 10
+    override val count: Int = 5
   }
 }

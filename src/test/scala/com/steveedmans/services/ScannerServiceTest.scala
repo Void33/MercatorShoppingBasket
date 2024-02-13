@@ -1,6 +1,7 @@
 package com.steveedmans.services
 
-import com.steveedmans.model.Shop
+import com.steveedmans.model.*
+import com.steveedmans.offers._
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.*
 
@@ -63,6 +64,37 @@ class ScannerServiceTest extends AnyWordSpec with should.Matchers {
       }
     }
 
+    "apply the offers to a basket" should {
+      "use the BOGOF apples offer" in {
+        val basket = Basket()
+        basket.add(apple)
+        basket.add(apple)
+
+        basket.size shouldBe 2
+        basket.cost shouldBe 120
+
+        val finalBasket = service.applyOffers(basket)
+
+        finalBasket.size shouldBe 2
+        finalBasket.cost shouldBe 60
+      }
+
+      "use the 3 for 2 oranges offer" in {
+        val basket = Basket()
+        basket.add(orange)
+        basket.add(orange)
+        basket.add(orange)
+
+        basket.size shouldBe 3
+        basket.cost shouldBe 75
+
+        val finalBasket = service.applyOffers(basket)
+
+        finalBasket.size shouldBe 3
+        finalBasket.cost shouldBe 50
+      }
+    }
+
     "process the required items" should {
       "find an apple" in {
         val basket = service.processBasket("apple").getOrElse(fail("either was not Right!"))
@@ -77,9 +109,17 @@ class ScannerServiceTest extends AnyWordSpec with should.Matchers {
       }
 
       "find a collection of items" in {
+        // Should apply the BOGOF offer for apples
         val basket = service.processBasket("apple apple orange apple").getOrElse(fail("either was not Right!"))
         basket.size shouldBe 4
-        basket.cost shouldBe 205
+        basket.cost shouldBe 145
+      }
+
+      "find a larger collection of items" in {
+        // Should apply both offers
+        val basket = service.processBasket("apple apple orange apple apple orange apple orange").getOrElse(fail("either was not Right!"))
+        basket.size shouldBe 8
+        basket.cost shouldBe 230
       }
 
       "handle an empty basket" in {
